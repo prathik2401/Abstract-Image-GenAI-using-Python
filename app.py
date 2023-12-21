@@ -3,7 +3,7 @@ import main_gen  # Import your code
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def generate_image():
     # Call your draw function
     seed_value = main_gen.draw(3000, 2000, color=main_gen.random.randint(10, 500), perlinFactorW=4, perlinFactorH=5, step=main_gen.random_float_scaled)
