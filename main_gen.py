@@ -65,7 +65,7 @@ def draw(width, height, color=200, backgroundColor=(0, 0, 0), perlinFactorW=2, p
             else:
                 x_s, y_s = x_f, y_f
 
-    save(p, fname=f'image_{seed}', folder='.', overwrite=True)
+    save(p, fname=f'./images/image', folder='.', overwrite=True)
     return seed
 
 

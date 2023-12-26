@@ -1,26 +1,28 @@
-FROM python
+FROM python:3.8-slim-buster
 
+# Install necessary system packages
 RUN apt-get update && \
-    apt-get install -y libgl1-mesa-glx \
-                       libglib2.0-0 \
-                       libxrender1 \
-                       libxkbcommon-x11-0
+    apt-get install -y libgl1-mesa-glx libglib2.0-0 libxkbcommon-x11-0 libfontconfig1 && \
+    rm -rf /var/lib/apt/lists/*
 
-WORKDIR /workspace
+# Set Qt environment variables
+ENV QT_DEBUG_PLUGINS=1
+ENV QT_XCB_GL_INTEGRATION=xcb_egl
 
-ADD . /workspace
+WORKDIR /app
 
-COPY main_gen.py /workspace
-COPY painter.py /workspace
-COPY utils.py /workspace
+COPY main_gen.py .
+COPY painter.py .
+COPY utils.py .
+COPY requirements.txt .
 
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
-RUN chown -R 42420:42420 /workspace
+# Copy the source code into the container.
+COPY . .
 
-ENV LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
-ENV QT_PLUGIN_PATH=/usr/lib/x86_64-linux-gnu/qt5/plugins
+# Expose the port that the application listens on.
+EXPOSE 5000
 
-CMD ["bash", "-c", "export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH && python /workspace/app.py --platform xcb"]
-
-ENV HOME=/workspace
+# Run the application.
+CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
